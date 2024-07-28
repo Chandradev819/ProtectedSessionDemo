@@ -1,0 +1,33 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<button class="btn btn-primary" @onclick="ReadCounter">Read Value</button>
+<p>Current count: <strong>@currentCount</strong></p>
+
+<p>Read count: <strong>@readCount</strong></p>
+
+@code {
+    private int currentCount = 0;
+    private int readCount = 0;
+    private async Task IncrementCount()
+    {
+        currentCount++;
+        //Soring on Protected Session Store
+        await ProtectedSessionStore.SetAsync("count", currentCount);
+    }
+
+    private async Task ReadCounter()
+    {
+        //Soring on Protected Session Store
+        var result = await ProtectedSessionStore.GetAsync<int>("count");
+        readCount = result.Success ? result.Value : 0;
+    }
+}
